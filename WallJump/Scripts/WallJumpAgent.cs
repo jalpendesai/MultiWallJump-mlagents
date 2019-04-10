@@ -50,9 +50,6 @@ public class WallJumpAgent : Agent
 
     string[] detectableObjects;
 
-    float deadPitBoundx;
-    float deadPitBoundz;
-
     public override void InitializeAgent()
     {
         academy = FindObjectOfType<WallJumpAcademy>();
@@ -67,9 +64,6 @@ public class WallJumpAgent : Agent
         deadPitSpawnAreaBounds = deadPitSpawnArea.GetComponent<Collider>().bounds;  //  DeadPit Spawn Area bounds
         groundRenderer = ground.GetComponent<Renderer>();
         groundMaterial = groundRenderer.material;
-
-        deadPitBoundx = deadPit.GetComponent<Renderer>().bounds.size.x;
-        deadPitBoundz = deadPit.GetComponent<Renderer>().bounds.size.z;
 
         spawnArea.SetActive(false);
         deadPitSpawnArea.SetActive(false);
@@ -191,13 +185,13 @@ public class WallJumpAgent : Agent
     public Vector3 GetRandomPitPos()
     {
         Vector3 randomPitPos = Vector3.zero;
-        float randomPosx = Random.Range(-deadPitSpawnAreaBounds.extents.x + deadPitBoundx/2,
-                                        deadPitSpawnAreaBounds.extents.x - deadPitBoundx/2);
-        float randomPosz = Random.Range(-deadPitSpawnAreaBounds.extents.z + deadPitBoundz/2,
-                                        deadPitSpawnAreaBounds.extents.z - deadPitBoundz/2);
-        // float posZ = randomPosz < 0 ? randomPosz + 8.0f : randomPosz - 8.0f;
+        float randomPosx = Random.Range(-deadPitSpawnAreaBounds.extents.x,
+                                        deadPitSpawnAreaBounds.extents.x);
+        float randomPosz = Random.Range(-deadPitSpawnAreaBounds.extents.z,
+                                        deadPitSpawnAreaBounds.extents.z);
+        float posZ = randomPosz < 0 ? randomPosz + 3.0f : randomPosz - 3.0f;
         randomPitPos = deadPitSpawnArea.transform.position +
-                        new Vector3(randomPosx, 0.05f, randomPosz);
+                        new Vector3(randomPosx, 0.05f, posZ);
         return randomPitPos;
     }
 

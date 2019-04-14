@@ -27,6 +27,10 @@ public class WallJumpAgent : Agent
     Bounds deadPitSpawnAreaBounds;
     Rigidbody deadPitRB;
 
+    //  Collectibles
+
+    public GameObject coins;
+    Bounds groundArea;
 
     public GameObject goal;
     public GameObject shortBlock;
@@ -65,6 +69,9 @@ public class WallJumpAgent : Agent
         // deadPitRB = deadPit.GetComponent<Rigidbody>();
         spawnAreaBounds = spawnArea.GetComponent<Collider>().bounds;
         deadPitSpawnAreaBounds = deadPitSpawnArea.GetComponent<Collider>().bounds;  //  DeadPit Spawn Area bounds
+
+        groundArea = ground.GetComponent<Collider>().bounds;  //  Area Boundary
+
         groundRenderer = ground.GetComponent<Renderer>();
         groundMaterial = groundRenderer.material;
 
@@ -191,14 +198,26 @@ public class WallJumpAgent : Agent
     public Vector3 GetRandomPitPos()
     {
         Vector3 randomPitPos = Vector3.zero;
-        float randomPosx = Random.Range(-deadPitSpawnAreaBounds.extents.x + deadPitBoundx/2,
-                                        deadPitSpawnAreaBounds.extents.x - deadPitBoundx/2);
-        float randomPosz = Random.Range(-deadPitSpawnAreaBounds.extents.z + deadPitBoundz/2,
-                                        deadPitSpawnAreaBounds.extents.z - deadPitBoundz/2);
+        float randomPosx = Random.Range(-deadPitSpawnAreaBounds.extents.x + deadPitBoundx / 2,
+                                        deadPitSpawnAreaBounds.extents.x - deadPitBoundx / 2);
+        float randomPosz = Random.Range(-deadPitSpawnAreaBounds.extents.z + deadPitBoundz / 2,
+                                        deadPitSpawnAreaBounds.extents.z - deadPitBoundz / 2);
         // float posZ = randomPosz < 0 ? randomPosz + 8.0f : randomPosz - 8.0f;
         randomPitPos = deadPitSpawnArea.transform.position +
                         new Vector3(randomPosx, 0.05f, randomPosz);
         return randomPitPos;
+    }
+
+    public Vector3 SpawnRandomCoins()
+    {
+        Vector3 randomCoinPos = Vector3.zero;
+        Debug.Log("Coin: " + coins.transform.position);
+        randomCoinPos = ground.transform.position + new Vector3(Random.Range(-groundArea.extents.x, groundArea.extents.x),
+                                    2.0f,
+                                    -11.0f);
+        // -groundArea.extents.z, groundArea.extents.z
+        return randomCoinPos;
+
     }
 
     /// <summary>
@@ -279,6 +298,8 @@ public class WallJumpAgent : Agent
             Done();
             SetReward(-1f);
             ResetBlock();
+            coins.transform.position = SpawnRandomCoins();
+
             StartCoroutine(
                 GoalScoredSwapGroundMaterial(academy.failMaterial, .5f));
         }
@@ -305,6 +326,16 @@ public class WallJumpAgent : Agent
         }
     }
 
+    private void OnTriggerEnter(Collider col)
+    {
+        if (col.gameObject.CompareTag("coin"))
+        {
+            // Debug.Log("Yaaaaaaay..!!! Coin Collided");
+            SetReward(0.5f);
+            coins.transform.position = new Vector3(-14.0f, 2.0f, 10.0f);
+        }
+    }
+
     //Reset the orange block position
     void ResetBlock()
     {
@@ -321,6 +352,7 @@ public class WallJumpAgent : Agent
     public override void AgentReset()
     {
         ResetBlock();
+        coins.transform.position = SpawnRandomCoins();
         transform.localPosition = new Vector3(
             18 * (Random.value - 0.5f), 1, -15);
         configuration = Random.Range(0, 5);

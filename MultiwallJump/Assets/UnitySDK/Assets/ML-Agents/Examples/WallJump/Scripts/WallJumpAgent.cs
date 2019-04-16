@@ -211,7 +211,7 @@ public class WallJumpAgent : Agent
     public Vector3 SpawnRandomCoins()
     {
         Vector3 randomCoinPos = Vector3.zero;
-        Debug.Log("Coin: " + coins.transform.position);
+        // Debug.Log("Coin: " + coins.transform.position);
         randomCoinPos = ground.transform.position + new Vector3(Random.Range(-groundArea.extents.x, groundArea.extents.x),
                                     2.0f,
                                     -11.0f);

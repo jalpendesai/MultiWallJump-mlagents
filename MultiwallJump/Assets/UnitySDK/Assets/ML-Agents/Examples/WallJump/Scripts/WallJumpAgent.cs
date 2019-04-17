@@ -313,7 +313,7 @@ public class WallJumpAgent : Agent
             SetReward(1f);
             Done();
             StartCoroutine(
-                GoalScoredSwapGroundMaterial(academy.goalScoredMaterial, 2));
+                GoalScoredSwapGroundMaterial(academy.goalScoredMaterial, .5f));
         }
 
         if (col.gameObject.CompareTag("pit") && DoGroundCheck(true))

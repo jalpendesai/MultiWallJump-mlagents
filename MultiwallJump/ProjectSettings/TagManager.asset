@@ -13,6 +13,7 @@ TagManager:
   - banana
   - badBanana
   - coin
+  - dog
   layers:
   - Default
   - TransparentFX
